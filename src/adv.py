@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 import textwrap
 # Declare all the rooms
 room = {
@@ -46,26 +47,35 @@ valid_commands = ['n','s','e', 'w', 'q']
 # Print an error message if the movement isn't allowed.
 #
 
-def print_description(desc):
-    wrapper = textwrap.TextWrapper(width=50) 
-  
-    string = wrapper.fill(text=desc) 
-    return string
-
 def main():
     command = ''
     while command != 'q':
-        print(f'Current room: {player.current_room.name}\nDescription: {print_description(player.current_room.description)}')
+        print(player.__str__())
+        command = input('1. Enter either n, s, e or w to move to a cardinal direction\n2. Enter take [item name] or drop [item name] to add or remove item\n3. Enter q to quit: ')
+        
+        cmd = command.split(' ')
+        if (len(cmd) == 1):
+            if not command in valid_commands:
+                print('You have entered an invalid command')
+                exit()
+            c = command+'_to'
+            for k,v in room.items():
+                if hasattr(v, c):
+                    player.current_room = getattr(v, c)
+        else:
+            verb, obj, *args = cmd
+            if verb == 'take':
+                for i, item in enumerate(player.current_room.items):
+                    if item.name == obj:
+                        player.current_room.items.pop(i)
+                        player.items.append(item)
+                        item.on_take()
+                        break
+                else:
+                    print('The item does not exist in the current player\'s room')
+            elif verb == 'drop':
 
-        command = input('Enter either n, s, e or w to move to a cardinal direction or q to quit: ')
 
-        if not command in valid_commands:
-            print('You have entered an invalid command')
-            exit()
-        c = command+'_to'
-        for k,v in room.items():
-            if hasattr(v, c):
-                player.current_room = getattr(v, c)
     print('Bye ✌️')
     exit()
 
