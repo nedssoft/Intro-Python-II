@@ -3,19 +3,26 @@ from player import Player
 from item import Item
 import textwrap
 # Declare all the rooms
+
+outside_items = [Item('ocat', 'This is an outside room cat cat'), Item('odog', 'This is an outside room dog')]
+foyer_items = [Item('fcat', 'This is a foyer cat'), Item('fdog', 'This is a foyer dog')]
+overlook_items = [Item('vcat', 'This is an overlook cat'), Item('vdog', 'This is an overlook dog')]
+narrow_items = [Item('ncat', 'This is a narrow cat'), Item('ndog', 'This is a narrow dog')]
+treasure_items = [Item('tcat', 'This is a treasure cat'), Item('tdog', 'This is a treasure dog')]
+
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", outside_items ),
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""", foyer_items),
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", overlook_items),
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", narrow_items),
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", treasure_items),
 }
 # Link rooms together
 room['outside'].n_to = room['foyer']
@@ -33,7 +40,7 @@ room['treasure'].s_to = room['narrow']
 player = Player('Ned', room['outside'])
 
 
-valid_commands = ['n','s','e', 'w', 'q']
+valid_commands = ['n','s','e', 'w', 'q', 'i', 'inventory']
 
 
 # Write a loop that:
@@ -58,10 +65,13 @@ def main():
             if not command in valid_commands:
                 print('You have entered an invalid command')
                 exit()
-            c = command+'_to'
-            for k,v in room.items():
-                if hasattr(v, c):
-                    player.current_room = getattr(v, c)
+            elif cmd[0] in ['i', 'inventory']:
+                print(player.print_items())
+            else:
+                c = command+'_to'
+                for k,v in room.items():
+                    if hasattr(v, c):
+                        player.current_room = getattr(v, c)
         else:
             verb, obj, *args = cmd
             if verb == 'take':
@@ -74,6 +84,14 @@ def main():
                 else:
                     print('The item does not exist in the current player\'s room')
             elif verb == 'drop':
+                for i, item in enumerate(player.items):
+                    if item.name == obj:
+                        player.current_room.items.append(item)
+                        player.items.pop(i)
+                        item.on_drop()
+                        break
+                else:
+                    print('The item does not exist in the current player\'s items')
 
 
     print('Bye ✌️')

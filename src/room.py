@@ -14,7 +14,7 @@ class Room:
             output = f'{self.name} has the following items\n'
             item_count = 1
             for item in self.items:
-                output += f'[{item_count}]: {item}\n'
+                output += f'[{item_count}]: {item.name} ---> {item.description}\n'
                 item_count += 1
             return output
 
