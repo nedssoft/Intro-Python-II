@@ -57,7 +57,7 @@ valid_commands = ['n','s','e', 'w', 'q', 'i', 'inventory']
 def main():
     command = ''
     while command != 'q':
-        print(player.__str__())
+        print(player)
         command = input('1. Enter either n, s, e or w to move to a cardinal direction\n2. Enter take [item name] or drop [item name] to add or remove item\n3. Enter q to quit: ')
         
         cmd = command.split(' ')
@@ -68,13 +68,13 @@ def main():
             elif cmd[0] in ['i', 'inventory']:
                 print(player.print_items())
             else:
-                c = command+'_to'
-                for k,v in room.items():
-                    if hasattr(v, c):
-                        player.current_room = getattr(v, c)
+                direction = command+'_to'
+                for key,value in room.items():
+                    if hasattr(value, direction):
+                        player.current_room = getattr(value, direction)
         else:
             verb, obj, *args = cmd
-            if verb == 'take':
+            if verb in ['take', 'get']:
                 for i, item in enumerate(player.current_room.items):
                     if item.name == obj:
                         player.current_room.items.pop(i)
@@ -92,8 +92,6 @@ def main():
                         break
                 else:
                     print('The item does not exist in the current player\'s items')
-
-
     print('Bye ✌️')
     exit()
 

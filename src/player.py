@@ -10,7 +10,7 @@ class Player:
     def __str__(self):
         room_info = f'Current room: {self.current_room.name}\nDescription: {self.print_description()}\n'
         if (len(self.current_room.items)):
-           return  room_info + f'Room Items: {self.current_room.__str__()}'
+           return  room_info + f'Room Items: {self.current_room}'
         else:
             return room_info
 
@@ -28,6 +28,6 @@ class Player:
         msg = f'{self.name} currently carries the following items:\n'
         count = 1
         for item in self.items:
-            msg += f'[{count}]: {item.name} ---> {item.description}'
+            msg += f'[{count}]: {item}'
         return msg
 
